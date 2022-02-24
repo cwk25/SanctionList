@@ -1,0 +1,60 @@
+﻿@typeparam TItem
+@using System.Linq.Expressions
+@inherits InputBase<int>
+
+<div class="input-group">
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <label class="label" for="@Id">@Label</label>
+    }
+    <InputSelect id="@Id" class="input" @bind-Value=CurrentValue>
+        <option class="default-text" value="0">Select Option</option>
+        @foreach (var item in Items)
+        {
+            var key = GetKey(item);
+            var value = GetValue(item);
+            <option value=@key>@value</option>
+        }
+    </InputSelect>
+    <ValidationMessage For="@ValidationFor"></ValidationMessage>
+</div>
+@code {
+    [Parameter]
+    public IEnumerable<TItem> Items { get; set; }
+
+    [Parameter]
+    public string Id { get; set; }
+
+    [Parameter]
+    public string Label { get; set; }
+
+    [Parameter]
+    public string KeyPropertyName { get; set; }
+
+    [Parameter]
+    public string ValuePropertyName { get; set; }
+
+    [Parameter]
+    public Expression<Func<int>> ValidationFor { get; set; }
+
+    private object GetKey(object item) =>
+        item.GetType().GetProperty(KeyPropertyName).GetValue(item);
+
+    private object GetValue(object item) =>
+        item.GetType().GetProperty(ValuePropertyName).GetValue(item);
+
+    protected override bool TryParseValueFromString(string? value, out int result, out string? validationErrorMessage)
+    {
+        validationErrorMessage = null;
+        var isValid = int.TryParse(value, out var parsedValue);
+        if (isValid)
+        {
+            result = parsedValue;
+            return true;
+        }
+
+        result = 0;
+        return false;
+    }
+
+}

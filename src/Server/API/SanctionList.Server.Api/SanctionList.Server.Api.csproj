@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Client\Web\SanctionList.Client.Web.Ui\SanctionList.Client.Web.Ui.csproj" />
+    <ProjectReference Include="..\..\Core\SanctionList.Server.Application\SanctionList.Server.Application.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\SanctionList.Server.Persistence\SanctionList.Server.Persistence.csproj" />
+    <ProjectReference Include="..\..\Shared\SanctionList.Server.Shared.Caching\SanctionList.Server.Shared.Caching.csproj" />
+  </ItemGroup>
+
+</Project>

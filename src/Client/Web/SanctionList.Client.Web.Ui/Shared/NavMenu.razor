@@ -1,0 +1,101 @@
+﻿<nav class="nav">
+    <header class="nav__header">
+        <h2 class="nav__heading">Dow Jones Demo</h2>
+    </header>
+    <ul class="list nav__menu">
+        @foreach (var navlink in Navlinks)
+        {
+            var index = Navlinks.IndexOf(navlink);
+            <li class="list__item @_linkStatuses[index]" @onclick="() => NavigateTo(index)">
+                <Icon Type="@navlink.IconType"></Icon>
+                @navlink.LinkDisplay
+                @*<NavLink href="@navlink.Href">
+                    <Icon Type="@navlink.IconType"></Icon>
+                    @navlink.LinkDisplay
+                </NavLink>*@
+            </li>
+        }
+    </ul>
+</nav>
+
+@code {
+    [Inject]
+    private NavigationManager NavigationManager { get; set; }
+
+    [Parameter]
+    public List<NavInfo> Navlinks { get; set; } = new List<NavInfo>()
+    {
+        new NavInfo()
+        {
+            Href = "search",
+            IconType = IconOptions.Type.Search,
+            LinkDisplay = "Search Name"
+        },
+        new NavInfo()
+        {
+            Href = "configure",
+            IconType = IconOptions.Type.Cog,
+            LinkDisplay = "Configure Search"
+        }
+    };
+
+    private List<string> _linkStatuses = new();
+
+    private int _currentNavIndex = -1;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Setup();
+        GetCurrentUri();
+    }
+
+    private void Setup()
+    {
+        foreach (var navlink in Navlinks)
+        {
+            _linkStatuses.Add(string.Empty);
+        }
+    }
+
+    private void GetCurrentUri()
+    {
+        if (NavigationManager.BaseUri == NavigationManager.Uri)
+            return;
+
+        var route = NavigationManager.Uri[NavigationManager.BaseUri.Length..];
+        var matchedNav = Navlinks.Find(n => n.Href == route);
+        var matchIndex = Navlinks.IndexOf(matchedNav);
+        UpdateLinkDisplay(matchIndex);
+    }
+
+    private void NavigateTo(int index)
+    {
+        UpdateLinkDisplay(index);
+        NavigationManager.NavigateTo(Navlinks[index].Href);
+    }
+
+    private void UpdateLinkDisplay(int index)
+    {
+        if(_currentNavIndex != -1)
+            _linkStatuses[_currentNavIndex] = string.Empty;
+
+        _linkStatuses[index] = "list__item--selected";
+        _currentNavIndex = index;
+    }
+
+    public class NavInfo
+    {
+        public string Href { get; set; }
+        public IconOptions.Type IconType { get; set; }
+        public string LinkDisplay { get; set; }
+    }
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

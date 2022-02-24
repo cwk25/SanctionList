@@ -1,0 +1,60 @@
+﻿@page "/configure"
+@using SanctionList.Shared.Dto.Commands
+
+
+@if (_methods != null && _criteria != null)
+{
+    <EditForm class="form" Model="_request" OnSubmit="Submit">
+        <div class="form__header">Configure Search Criteria</div>
+        <Dropdown Label="Search Method"
+                  @bind-Value="_request.MatchingMethodId"
+                  Id="@nameof(_request.MatchingMethodId)"
+                  Items="_methods"
+                  KeyPropertyName="@nameof(MatchingMethodResponse.Id)"
+                  ValuePropertyName="@nameof(MatchingMethodResponse.Method)"
+                  ValidationFor="() => _request.MatchingMethodId"></Dropdown>
+        <InputGroupNumber Label="Match Ratio to Flag"
+                          Id="@nameof(_request.ReturnOnMatchRatio)"
+                          Placeholder="Return On Match (Ratio %)"
+                          @bind-Value="@_request.ReturnOnMatchRatio"
+                          ValidationFor="() => _request.ReturnOnMatchRatio"></InputGroupNumber>
+        <footer class="form__footer">
+            <div>@_message</div>
+            <CustomButton Type="ButtonOptions.Type.Primary">Update</CustomButton>
+        </footer>
+    </EditForm>
+}
+
+
+
+@code {
+    [Inject] private HttpClient _httpClient { get; set; }
+
+    private GetMatchingCriteriaResponse _criteria;
+
+    private List<MatchingMethodResponse> _methods;
+
+    private UpdateMatchingCriteriaCommand _request = new();
+
+    private string _message = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _methods = await _httpClient.GetFromJsonAsync<List<MatchingMethodResponse>>("MatchingMethod");
+        _criteria = await _httpClient.GetFromJsonAsync<GetMatchingCriteriaResponse>("MatchingCriteria");
+        _request.MatchingMethodId = _criteria.MatchingMethodId;
+        _request.ReturnOnMatchRatio = _criteria.ReturnOnMatchRatio;
+    }
+
+    private async Task Submit(EditContext context)
+    {
+        _message = string.Empty;
+        if(context.Validate())
+            Console.WriteLine("Submitted");
+
+        await _httpClient.PostAsJsonAsync("MatchingCriteria/update", _request);
+        _message = "Updated!";
+    }
+
+}

@@ -1,0 +1,12 @@
+﻿<div class="info-group">
+    <label class="label">@Label</label>
+    <label class="info__value">@ChildContent</label>
+</div>
+
+@code {
+    [Parameter]
+    public string Label { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

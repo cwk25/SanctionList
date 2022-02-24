@@ -1,0 +1,64 @@
+﻿@attribute [CascadingTypeParameter(nameof(TItem))]
+@typeparam TItem
+
+<table class="table">
+    <CascadingValue Value="this">
+        @ChildContent
+    </CascadingValue>
+    
+    <tr class="table__header">
+        @foreach (var column in _columns)
+        {
+            <th>@column.Name</th>
+        }
+    </tr>
+    @foreach (var obj in Data)
+    {
+        var objIndex = Data.IndexOf(obj);
+        <tr class="table__item" @onclick="() => TriggerRowClick(objIndex)">
+            @foreach (var column in _columns)
+            {
+                @column.Render(obj);
+            }
+        </tr>
+    }
+</table>
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnRowClick { get; set; }
+
+    [Parameter]
+    public List<TItem> Data { get; set; }
+
+    private List<DataColumn<TItem>> _columns = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+            StateHasChanged();
+
+        if (OnRowClick.HasDelegate)
+            await OnRowClick.InvokeAsync(0);
+    }
+
+    internal void AddColumn(DataColumn<TItem> column)
+    {
+        _columns.Add(column);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (OnRowClick.HasDelegate)
+            await OnRowClick.InvokeAsync(0);
+
+    }
+
+    private async Task TriggerRowClick(int index)
+    {
+        if (OnRowClick.HasDelegate)
+            await OnRowClick.InvokeAsync(index);
+    }
+}

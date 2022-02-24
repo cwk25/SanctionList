@@ -1,0 +1,56 @@
+﻿<div class="tab-control">
+    <div class="button-group">
+        @foreach (var tabPage in _tabPages)
+        {
+            <CustomButton Type="@GetButtonType(tabPage)"
+                          OnClick="() => ActivatePage(tabPage)">
+                @tabPage.TabName
+            </CustomButton>
+        }
+    </div>
+    <section class="tab__content">
+        <CascadingValue Value="this">
+            @ChildContent
+        </CascadingValue>
+    </section>
+</div>
+
+
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    private List<TabPage> _tabPages = new();
+
+    public TabPage ActivePage { get; set; }
+
+    [Parameter]
+    public int SelectedPageIndex { get; set; }
+
+    [Parameter]
+    public EventCallback<int> SelectedPageIndexChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnTabSelection { get; set; }
+
+    internal async Task AddTabPage(TabPage tabPage)
+    {
+        _tabPages.Add(tabPage);
+        if (_tabPages.Count == 1)
+            ActivePage = tabPage;
+    }
+
+    internal async Task ActivatePage(TabPage tabPage)
+    {
+        ActivePage = tabPage;
+
+        if(OnTabSelection.HasDelegate)
+            await OnTabSelection.InvokeAsync(_tabPages.IndexOf(tabPage));
+
+    }
+
+    private ButtonOptions.Type GetButtonType(TabPage tabPage) =>
+        tabPage == ActivePage ? ButtonOptions.Type.TabActive : ButtonOptions.Type.Tab;
+
+}

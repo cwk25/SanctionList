@@ -1,0 +1,25 @@
+﻿<svg class="icon">
+    <use href="@IconHref()"></use>
+</svg>
+
+@code {
+    [Parameter]
+    public IconOptions.Type Type { get; set; }
+
+    private const string IconPath = "/images/icons.svg";
+
+    private string IconHref()
+    {
+        var iconId = Type switch{
+            IconOptions.Type.Cog => "cog",
+            IconOptions.Type.Database => "database",
+            IconOptions.Type.Desktop => "desktop",
+            IconOptions.Type.Search => "search",
+            _ => throw new ArgumentException("Invalid Type")
+            };
+
+        return $"{IconPath}#{iconId}";
+    }
+        
+
+}

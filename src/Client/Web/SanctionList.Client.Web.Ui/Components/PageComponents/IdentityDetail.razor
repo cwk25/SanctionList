@@ -1,0 +1,18 @@
+﻿<article class="grid grid--1x2">
+    <InfoGroup Label="Gender">@GenderOrOrganization</InfoGroup>
+    <InfoGroup Label="Citizenship">@CustomerData.Citizenship</InfoGroup>
+    <InfoGroup Label="Id No.">@CustomerData.IdNo</InfoGroup>
+    <InfoGroup Label="Id Type">@CustomerData.IdType</InfoGroup>
+    <InfoGroup Label="DOB / DOR">@CustomerData.Dob</InfoGroup>
+</article>
+
+@code {
+    [Parameter]
+    public BlacklistedCustomerResponse CustomerData { get; set; }
+
+    private string GenderOrOrganization =>
+        CustomerData.IndOrg == "INDIVIDUAL" 
+            ? CustomerData.Gender.ToString() 
+            : CustomerData.IndOrg;
+
+}

@@ -1,0 +1,42 @@
+﻿<button class="btn @AdditionalClasses()"
+        type="@ButtonType"
+        @onclick="InvokeAction">
+    @ChildContent
+</button>
+
+@code {
+    [Parameter]
+    public ButtonOptions.Type Type { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback<Action> OnClick { get; set; }
+
+    [Parameter]
+    public bool PreventDefault { get; set; } = false;
+
+    private async Task InvokeAction()
+    {
+        if (OnClick.HasDelegate)
+            await OnClick.InvokeAsync();
+    }
+
+    private string AdditionalClasses()
+    {
+        var typeCss = Type switch{
+            ButtonOptions.Type.Primary => "btn--primary",
+            ButtonOptions.Type.Icon => "btn--icon",
+            ButtonOptions.Type.Tab => "btn--tab",
+            ButtonOptions.Type.TabActive => "btn--tab btn--tab--active",
+            _ => throw new ArgumentException("Invalid Button Type")
+            };
+
+        return typeCss;
+    }
+
+    private string ButtonType =>
+        PreventDefault ? "button" : "submit";
+
+}

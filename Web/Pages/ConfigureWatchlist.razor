@@ -1,0 +1,23 @@
+﻿@page "/configure"
+
+<h3>ConfigureWatchlist</h3>
+
+@if (_criteria != null)
+{
+    <label>@_criteria.MatchingMethod</label>
+    <label>@_criteria.ReturnOnMatchRatio</label>
+}
+
+
+@code {
+    [Inject] private HttpClient _httpClient { get; set; }
+
+    private GetMatchingCriteriaResponse _criteria;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _criteria = await _httpClient.GetFromJsonAsync<GetMatchingCriteriaResponse>("MatchingCriteria");
+    }
+
+}

@@ -1,0 +1,115 @@
+﻿@page "/search"
+
+<EditForm Model="_searchQuery" class="form" OnSubmit="Search">
+    <header class="form__header">
+        <h2 class="content__header">Search Customer</h2>
+    </header>
+    <SearchBox Placeholder="Customer Name"
+               @bind-Value="@_searchQuery.Name"
+               OnClick="Search">
+    </SearchBox>
+</EditForm>
+@*@if (_shouldDisplaySpinner)
+{
+    <Spinner></Spinner>
+}*@
+@if (_blacklistedCustomer != null)
+{
+    <article class="search-result">
+        <header class="search-result__header">
+            <div class="info-group">
+                <label class="label">Search For</label><label class="search-result__info">@_searchFor</label>
+            </div>
+            @*<div class="info-group">
+                <label class="label">Matches Count</label><label class="search-result__info">@_blacklistedCustomer.Count</label>
+            </div>*@
+        </header>
+        <div class="info-group">
+            @foreach (var customer in _blacklistedCustomer)
+            {
+                @foreach (var name in customer.MatchedNames)
+                {
+                    <div class="badge badge--secondary">@name.Name @name.MatchRatio</div>
+                }
+            }
+        </div>
+    </article>
+    @if (_blacklistedCustomer.Count > 0)
+    {
+        <TabControl OnTabSelection="ShowMatchingNames">
+            @foreach (var customer in _blacklistedCustomer)
+            {
+                <TabPage TabName="@customer.DowJonesId">
+                    <IdentityDetail CustomerData="customer"></IdentityDetail>
+                </TabPage>
+            }
+        </TabControl>
+
+        @if (_selectedCustomerMatchedNames.Count > 0)
+        {
+            <DataGrid Data="@_selectedCustomerMatchedNames">
+                <DataColumn Name="Name Matches" Value="c => c.Name"></DataColumn>
+                <DataColumn Name="Name Type" Value="c => c.NameType"></DataColumn>
+                <DataColumn Name="Matching Score (%)" Value="c => c.MatchRatio"></DataColumn>
+            </DataGrid>
+        }
+    }
+    else
+    {
+        <header class="search-result__header">
+            <label class="label">No matches</label>
+        </header>
+    }
+}
+
+@code {
+    [Inject]
+    private HttpClient HttpClient { get; set; }
+
+    private GetBlacklistedCustomerQuery _searchQuery { get; set; } = new();
+
+    private string _searchFor;
+
+    private int _totalMatchCount = 0;
+
+    private List<BlacklistedCustomerResponse> _blacklistedCustomer;
+
+    private List<BlacklistedMatch> _selectedCustomerMatchedNames = new();
+
+    private int _selectedDetailIndex;
+
+    private bool _shouldDisplaySpinner;
+
+    private async Task Search()
+    {
+        try
+        {
+            _shouldDisplaySpinner = true;
+            
+            var response = await HttpClient.PostAsJsonAsync("Blacklist/match", _searchQuery);
+            _shouldDisplaySpinner = false;
+            if (!response.IsSuccessStatusCode)
+                throw new Exception("Unable to process");
+            
+            _blacklistedCustomer = await response.Content.ReadFromJsonAsync<List<BlacklistedCustomerResponse>>();
+            if(_blacklistedCustomer is {Count: > 0 })
+                ShowMatchingNames(0);
+
+            _searchFor = _searchQuery.Name;
+            
+            
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+            
+        }
+    }
+
+    private void ShowMatchingNames(int index)
+    {
+        _selectedCustomerMatchedNames = _blacklistedCustomer[index].MatchedNames;
+    }
+
+}

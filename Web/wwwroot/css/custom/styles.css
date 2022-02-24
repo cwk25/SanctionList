@@ -1,0 +1,152 @@
+:root {
+  --color-primary: #51c585;
+  --color-background-content: #131416;
+  --color-background-secondary: #1e1f21;
+}
+
+html {
+  font-size: 62.5%;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.5;
+  color: #fff;
+}
+
+h2 {
+  margin: 0;
+}
+
+/* Icons */
+.icon {
+  fill: #fff;
+  height: 15px;
+  width: 15px;
+}
+
+/* Buttons */
+.btn {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 0;
+  outline: 0;
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  transition: transform 0.3s;
+}
+
+.btn--primary {
+  background: var(--color-primary);
+}
+
+.btn--icon {
+  background: var(--color-background-secondary);
+}
+
+.btn:active {
+  transform: translate(3px, 3px);
+}
+
+/* Input */
+.input-group {
+  margin-bottom: 1rem;
+}
+
+.input {
+  background: var(--color-background-secondary);
+  border: 0;
+  border-radius: 1rem;
+  outline: 0;
+  padding: 1rem 1.5rem;
+  color: #fff;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input-group--button {
+  background: var(--color-background-secondary);
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Badges */
+.badge {
+  padding: 1rem;
+  font-size: 1rem;
+  border-radius: 20px;
+}
+
+/* Lists */
+.list {
+  list-style: none;
+  padding-inline-start: 0;
+  margin: 0;
+}
+
+.list__item {
+  margin-bottom: 1rem;
+}
+
+/* Nav Menu */
+.nav {
+  background: var(--color-background-secondary);
+  min-width: 250px;
+}
+
+.nav__header {
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+}
+.nav .list {
+  font-size: 1.8rem;
+  padding-left: 3rem;
+}
+
+.nav .list__item {
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  padding: 1.5rem 0 1.5rem 2.5rem;
+  margin-bottom: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav .list__item--selected {
+  background: var(--color-background-content);
+  color: var(--color-primary);
+}
+
+.nav .list__item--selected .icon {
+  fill: var(--color-primary);
+}
+
+/* Forms */
+.form {
+  font-size: 1.5rem;
+}
+
+.form__header {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Containers */
+.main {
+  background: #131416;
+  min-height: 100vh;
+  min-width: 100vw;
+  display: grid;
+  grid-template-columns: min-content auto;
+}
+
+.container-content {
+  padding: 4rem;
+}
+
+.content__header {
+  font-size: 2rem;
+  margin-bottom: 3rem;
+}
